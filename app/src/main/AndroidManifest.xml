@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="de.tu_dresden.inf.es.workedout.workedout" >
+
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme" >
+        <activity
+            android:name=".MainActivity"
+            android:label="@string/app_name" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".ExerciseSelectActivity"
+            android:label="@string/title_activity_exercise_select" >
+        </activity>
+        <activity
+            android:name=".SelectBodyPartActivity"
+            android:label="@string/title_activity_select_body_part" >
+        </activity>
+    </application>
+
+</manifest>
