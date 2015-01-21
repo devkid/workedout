@@ -21,6 +21,10 @@
             android:name=".SelectBodyPartActivity"
             android:label="@string/title_activity_select_body_part" >
         </activity>
+        <activity
+            android:name=".ExerciseExecutionActivity"
+            android:label="@string/title_activity_exercise_execution" >
+        </activity>
 
         <!-- Database connection -->
         <meta-data android:name="AA_DB_NAME" android:value="workedout.db" />

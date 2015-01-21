@@ -12,5 +12,6 @@
     <string name="title_activity_select_body_part">Select body part</string>
     <string name="front_body">Front</string>
     <string name="back_body">Back</string>
+    <string name="title_activity_exercise_execution">ExerciseExecutionActivity</string>
 
 </resources>

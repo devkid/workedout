@@ -1,6 +1,12 @@
 package de.tu_dresden.inf.es.workedout.workedout;
 
+import java.util.Locale;
+
 import android.os.Bundle;
+
+import android.content.Intent;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -112,7 +118,8 @@ public class SelectBodyPartActivity extends ActionBarActivity implements ActionB
     }
 
     public void onUpperBody(View view) {
-        Toast.makeText(this, "Upper body", Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(this, ExerciseExecutionActivity.class);
+        startActivity(intent);
     }
 
     public void onThorso(View view) {
