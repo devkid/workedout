@@ -1,11 +1,10 @@
-.gradle
-/local.properties
 /.idea
-.DS_Store
+/.DS_Store
 /build
+/local.properties
+
+# Gradle stuff
+/.gradle
 /gradle
-build.gradle
-gradle.properties
-gradlew
-gradlew.bat
-settings.gradle
+/gradlew
+/gradlew.bat
