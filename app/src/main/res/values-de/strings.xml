@@ -2,8 +2,8 @@
 <resources>
     <string name="app_name">WorkedOut</string>
     <string name="action_settings">Einstellungen</string>
-    <string name="back_body">Vorderseite</string>
-    <string name="front_body">Rückseite</string>
+    <string name="back_body">Rückseite</string>
+    <string name="front_body">Vorderseite</string>
     <string name="hello_world">Hallo, Welt!</string>
     <string name="no_workouts">Noch keine Workouts!</string>
     <string name="recent_workouts">Letzte Workouts:</string>

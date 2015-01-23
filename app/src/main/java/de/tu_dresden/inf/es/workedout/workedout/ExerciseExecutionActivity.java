@@ -19,9 +19,10 @@ public class ExerciseExecutionActivity extends ActionBarActivity implements Sens
     private SensorManager mSensorManager;
     private Sensor mAccelerometer;
 
-    private Vector mLastVector = null;
+    private long mTime = 0;
     private Vector mGravity = new Vector(0, 0, 0);
-    private int mLastDirection = 1;
+    private Vector mVelocity = new Vector(0, 0, 0);
+    private boolean mLimited = false;
     private int mCounter = 0;
 
     @Override
@@ -54,31 +55,43 @@ public class ExerciseExecutionActivity extends ActionBarActivity implements Sens
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        final double alpha = 0.8;
+
+        final double alpha = 0.95;
         final double thresh = 0.4;
 
-        Vector v = new Vector(event.values[0], event.values[1], event.values[2]);
-        double length = v.length();
+        final long time = System.nanoTime();
 
-        // detect gravity by a low pass filter
-        mGravity = mGravity.multiplied(alpha).added(v.multiplied(1 - alpha));
+        if(mTime != 0) {
+            Vector v = new Vector(event.values[0], event.values[1], event.values[2]);
+            double length = v.length();
 
-        // real acceleration
-        v.subtract(mGravity);
+            // detect gravity by a low pass filter
+            mGravity = mGravity.multiplied(alpha).added(v.multiplied(1 - alpha));
 
-        // Debug Output
-        ((TextView) findViewById(R.id.debug)).setText(v.toString("\n"));
+            // real acceleration
+            v.subtract(mGravity);
 
-        if(mLastVector != null && length != 0) {
-            double scalarProduct = v.scalarProduct(mLastVector);
-            if (((scalarProduct < 0 && mLastDirection ==  1) ||
-                 (scalarProduct > 0 && mLastDirection == -1)) &&
-                (mLastVector.length() - v.length()) > thresh) {
-                mLastDirection *= -1;
+            Vector lastVelocity = new Vector(mVelocity);
+
+            // integrate to get velocity
+            mVelocity.multiply((time - mTime) * 1e-9);
+            mVelocity.add(v);
+
+            // Debug Output
+            ((TextView) findViewById(R.id.debug)).setText(mVelocity.toString("\n") + "\n" + String.valueOf(mLimited));
+
+            //double scalarProduct = mVelocity.scalarProduct(lastVelocity);
+
+            // detect zero crossing of velocity and limit detection there
+            if (mVelocity.length() <= thresh && !mLimited) {
+                mLimited = true;
                 updateCounter();
+            } else if(mVelocity.length() > thresh && mLimited) {
+                mLimited = false;
             }
         }
-        mLastVector = v;
+
+        mTime = time;
     }
 
     @Override
