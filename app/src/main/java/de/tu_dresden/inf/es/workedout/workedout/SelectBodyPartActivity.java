@@ -1,12 +1,7 @@
 package de.tu_dresden.inf.es.workedout.workedout;
 
-import java.util.Locale;
-
-import android.os.Bundle;
-
 import android.content.Intent;
-import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.ActionBar;
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -90,7 +85,8 @@ public class SelectBodyPartActivity extends ActionBarActivity implements ActionB
     }
 
     public void onUpperBody(View view) {
-        Intent intent = new Intent(this, ExerciseExecutionActivity.class);
+        Intent intent = new Intent(this, SelectExerciseActivity.class);
+        intent.putExtra("bodyPartId", 1);
         startActivity(intent);
     }
 
