@@ -14,6 +14,8 @@ import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.ListAdapter;
@@ -22,6 +24,8 @@ import android.widget.ListView;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
+
+import de.tu_dresden.inf.es.workedout.workedout.utils.Nfc;
 
 
 public class SelectExerciseActivity extends ActionBarActivity {
@@ -35,27 +39,44 @@ public class SelectExerciseActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select_exercise);
 
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         // list and adapter for recommended exercises
         mExercises = new ArrayList<>();
         mExercisesListAdapter = new ArrayAdapter<>(getApplicationContext(),
                 R.layout.list_item_black_text, R.id.black_text, mExercises);
-        ((ListView) findViewById(R.id.exerciseListView)).setAdapter(mExercisesListAdapter);
+        ListView exercisesView = (ListView) findViewById(R.id.exerciseListView);
+        exercisesView.setAdapter(mExercisesListAdapter);
 
         Intent intent = getIntent();
 
         // intent came from NFC event
         mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
         if(mNfcAdapter != null && mNfcAdapter.isEnabled() &&
-            NfcAdapter.ACTION_NDEF_DISCOVERED.equals(intent.getAction())) {
+           Nfc.isNfcIntent(intent)) {
             handleNfcIntent(intent);
         }
         else {
             if(intent.hasExtra("bodyPartId")) {
-                getExerciesFromBodyPart(intent.getIntExtra("bodyPartId", 0));
+                getExercisesFromBodyPart(intent.getIntExtra("bodyPartId", 0));
+            } else if (intent.hasExtra("device")) {
+                getExercisesFromDevice(intent.getStringExtra("device"));
             }
         }
 
-        // fill list:
+        // list item selection handling
+        exercisesView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                // get selected entry
+                String entry = (String) parent.getItemAtPosition(position);
+
+                // start exercise
+                Intent intent = new Intent(SelectExerciseActivity.this, ExerciseExecutionActivity.class);
+                intent.putExtra("exercise", entry);
+                startActivity(intent);
+            }
+        });
     }
 
     @Override
@@ -68,6 +89,9 @@ public class SelectExerciseActivity extends ActionBarActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
             case R.id.action_settings:
+                return true;
+            case android.R.id.home:
+                finish();
                 return true;
         }
 
@@ -87,7 +111,7 @@ public class SelectExerciseActivity extends ActionBarActivity {
         ((BaseAdapter) mExercisesListAdapter).notifyDataSetChanged();
     }
 
-    public void getExerciesFromBodyPart(int bodyPartId) {
+    public void getExercisesFromBodyPart(int bodyPartId) {
         mExercises.clear();
         if(bodyPartId == 1) {
             mExercises.add("Shrugs");
@@ -104,13 +128,15 @@ public class SelectExerciseActivity extends ActionBarActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        setupForegroundDispatch(this, mNfcAdapter);
+        if(mNfcAdapter != null && mNfcAdapter.isEnabled())
+            Nfc.setupForegroundDispatch(this, mNfcAdapter);
     }
 
     @Override
     protected void onPause() {
-        stopForegroundDispatch(this, mNfcAdapter);
-        super.onPause();
+        Nfc.stopForegroundDispatch(this, mNfcAdapter);
+        if(mNfcAdapter != null && mNfcAdapter.isEnabled())
+            super.onPause();
     }
 
     @Override
@@ -119,57 +145,7 @@ public class SelectExerciseActivity extends ActionBarActivity {
     }
 
     public void handleNfcIntent(Intent intent) {
-        String type = intent.getType();
-        if ("x-application/workedout-device".equals(type)) {
-            Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
-            Ndef ndef = Ndef.get(tag);
-            if (ndef != null) {
-
-                NdefMessage ndefMessage = ndef.getCachedNdefMessage();
-
-                NdefRecord[] records = ndefMessage.getRecords();
-                for (NdefRecord ndefRecord : records) {
-                    if (ndefRecord.getTnf() == NdefRecord.TNF_MIME_MEDIA) {
-                        String device = new String(ndefRecord.getPayload());
-                        Log.i("NFC payload", device);
-                        getExercisesFromDevice(device);
-                    }
-                }
-            }
-        }
-    }
-
-    private String readText(NdefRecord record) throws UnsupportedEncodingException {
-        byte[] payload = record.getPayload();
-        String textEncoding = ((payload[0] & 128) == 0) ? "UTF-8" : "UTF-16";
-        int languageCodeLength = payload[0] & 0063;
-        return new String(payload, languageCodeLength + 1, payload.length - languageCodeLength - 1,
-                          textEncoding);
-    }
-
-    public static void setupForegroundDispatch(final Activity activity, NfcAdapter adapter) {
-        final Intent intent = new Intent(activity.getApplicationContext(), activity.getClass());
-        intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-
-        final PendingIntent pendingIntent = PendingIntent.getActivity(activity.getApplicationContext(), 0, intent, 0);
-
-        IntentFilter[] filters = new IntentFilter[1];
-        String[][] techList = new String[][]{};
-
-        // Notice that this is the same filter as in our manifest.
-        filters[0] = new IntentFilter();
-        filters[0].addAction(NfcAdapter.ACTION_NDEF_DISCOVERED);
-        filters[0].addCategory(Intent.CATEGORY_DEFAULT);
-        try {
-            filters[0].addDataType("x-application/workedout-device");
-        } catch (IntentFilter.MalformedMimeTypeException e) {
-            throw new RuntimeException("Check your mime type.");
-        }
-
-        adapter.enableForegroundDispatch(activity, pendingIntent, filters, techList);
-    }
-
-    public static void stopForegroundDispatch(final Activity activity, NfcAdapter adapter) {
-        adapter.disableForegroundDispatch(activity);
+        String device = new String(Nfc.getNdefRecord(intent).getPayload());
+        getExercisesFromDevice(device);
     }
 }

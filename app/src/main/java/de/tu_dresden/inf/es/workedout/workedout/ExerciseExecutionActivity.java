@@ -1,6 +1,7 @@
 package de.tu_dresden.inf.es.workedout.workedout;
 
 import android.content.Context;
+import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -20,8 +21,9 @@ public class ExerciseExecutionActivity extends ActionBarActivity implements Sens
     private Sensor mAccelerometer;
 
     private long mTime = 0;
-    private Vector mGravity = new Vector(0, 0, 0);
-    private Vector mVelocity = new Vector(0, 0, 0);
+    private Vector mGravity  = new Vector(0, 0, 0),
+                   mVelocity = new Vector(0, 0, 0),
+                   mDistance = new Vector(0, 0, 0);
     private boolean mLimited = false;
     private int mCounter = 0;
 
@@ -36,6 +38,12 @@ public class ExerciseExecutionActivity extends ActionBarActivity implements Sens
 
         mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+
+        // set exercise name
+        Intent intent = getIntent();
+        if(intent.hasExtra("exercise")) {
+            ((TextView) findViewById(R.id.exerciseName)).setText(intent.getStringExtra("exercise"));
+        }
     }
 
     protected void onResume() {
@@ -56,10 +64,11 @@ public class ExerciseExecutionActivity extends ActionBarActivity implements Sens
     @Override
     public void onSensorChanged(SensorEvent event) {
 
-        final double alpha = 0.95;
-        final double thresh = 0.4;
+        final double alpha = 0.8;
+        final double thresh = 0.2;
 
         final long time = System.nanoTime();
+        final double elapsedTime = (time - mTime) * 1e-9;
 
         if(mTime != 0) {
             Vector v = new Vector(event.values[0], event.values[1], event.values[2]);
@@ -71,11 +80,11 @@ public class ExerciseExecutionActivity extends ActionBarActivity implements Sens
             // real acceleration
             v.subtract(mGravity);
 
-            Vector lastVelocity = new Vector(mVelocity);
-
             // integrate to get velocity
-            mVelocity.multiply((time - mTime) * 1e-9);
-            mVelocity.add(v);
+            mVelocity.add(v.multiplied(elapsedTime));
+
+            // integrate again to get distance
+            mDistance.add(mVelocity.multiplied(elapsedTime));
 
             // Debug Output
             ((TextView) findViewById(R.id.debug)).setText(mVelocity.toString("\n") + "\n" + String.valueOf(mLimited));

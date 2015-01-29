@@ -1,6 +1,7 @@
 package de.tu_dresden.inf.es.workedout.workedout;
 
 import android.content.Intent;
+import android.nfc.NfcAdapter;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -16,16 +17,24 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.activeandroid.query.Select;
+
+import de.tu_dresden.inf.es.workedout.workedout.utils.Nfc;
+
 
 public class SelectBodyPartActivity extends ActionBarActivity implements ActionBar.TabListener {
 
     ViewPager mViewPager;
     SectionsPagerAdapter mSectionsPagerAdapter;
 
+    NfcAdapter mNfcAdapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select_body_part);
+
+        mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
 
         // Set up the action bar.
         final ActionBar actionBar = getSupportActionBar();
@@ -52,6 +61,31 @@ public class SelectBodyPartActivity extends ActionBarActivity implements ActionB
                 .setTabListener(this));
     }
 
+    /*
+        NFC handling
+     */
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(mNfcAdapter != null && mNfcAdapter.isEnabled())
+            Nfc.setupForegroundDispatch(this, mNfcAdapter);
+    }
+
+    @Override
+    protected void onPause() {
+        Nfc.stopForegroundDispatch(this, mNfcAdapter);
+        if(mNfcAdapter != null && mNfcAdapter.isEnabled())
+            super.onPause();
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        String device = new String(Nfc.getNdefRecord(intent).getPayload());
+        Intent newIntent = new Intent(this, SelectExerciseActivity.class);
+        newIntent.putExtra("device", device);
+        startActivity(newIntent);
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

@@ -1,6 +1,7 @@
 package de.tu_dresden.inf.es.workedout.workedout;
 
 import android.content.Intent;
+import android.nfc.NfcAdapter;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
@@ -13,16 +14,19 @@ import android.widget.ListView;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.tu_dresden.inf.es.workedout.workedout.utils.Nfc;
+
 
 public class MainActivity extends ActionBarActivity {
 
-    public MainActivity() {
-    }
+    NfcAdapter mNfcAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
 
         // Fill list of recent workouts
         List<String> recentWorkouts = new ArrayList<>();
@@ -37,6 +41,32 @@ public class MainActivity extends ActionBarActivity {
     public void onStartNewWorkout(View view) {
         Intent intent = new Intent(this, SelectBodyPartActivity.class);
         startActivity(intent);
+    }
+
+    /*
+        NFC handling
+     */
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(mNfcAdapter != null && mNfcAdapter.isEnabled())
+            Nfc.setupForegroundDispatch(this, mNfcAdapter);
+    }
+
+    @Override
+    protected void onPause() {
+        Nfc.stopForegroundDispatch(this, mNfcAdapter);
+        if(mNfcAdapter != null && mNfcAdapter.isEnabled())
+            super.onPause();
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        String device = new String(Nfc.getNdefRecord(intent).getPayload());
+        Intent newIntent = new Intent(this, SelectExerciseActivity.class);
+        newIntent.putExtra("device", device);
+        startActivity(newIntent);
     }
 
 

@@ -11,8 +11,18 @@ public class Application extends android.app.Application {
         ActiveAndroid.initialize(this);
 
         if(BodyPart.all(BodyPart.class).isEmpty()) {
-            BodyPart neck = new BodyPart(false, "Neck", 0, 0, 100, 100);
-            neck.save();
+            new BodyPart(false, "Shoulders-Breast", 0, 0, 100, 100).save();
+            new BodyPart(false, "Arms", 0, 0, 100, 100).save();
+            new BodyPart(false, "Abdominal", 0, 0, 100, 100).save();
+            new BodyPart(false, "UpperLegs-Crotch", 0, 0, 100, 100).save();
+            new BodyPart(false, "LowerLegs", 0, 0, 100, 100).save();
+
+            new BodyPart(true, "Neck-UpperBack-Shoulders", 0, 0, 100, 100).save();
+            new BodyPart(true, "Arms", 0, 0, 100, 100).save();
+            new BodyPart(true, "LowerBack", 0, 0, 100, 100).save();
+            new BodyPart(true, "Buttocks", 0, 0, 100, 100).save();
+            new BodyPart(true, "UpperLegs", 0, 0, 100, 100).save();
+            new BodyPart(true, "LowerLegs", 0, 0, 100, 100).save();
         }
     }
 
