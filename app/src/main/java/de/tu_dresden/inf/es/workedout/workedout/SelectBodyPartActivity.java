@@ -10,16 +10,23 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
+
 
 import com.activeandroid.query.Select;
 
 import de.tu_dresden.inf.es.workedout.workedout.utils.Nfc;
+
+import java.util.List;
+
+import de.tu_dresden.inf.es.workedout.workedout.models.BodyPart;
+
 
 
 public class SelectBodyPartActivity extends ActionBarActivity implements ActionBar.TabListener {
@@ -124,13 +131,8 @@ public class SelectBodyPartActivity extends ActionBarActivity implements ActionB
         startActivity(intent);
     }
 
-    public void onThorso(View view) {
-        Toast.makeText(this, "Thorso", Toast.LENGTH_SHORT).show();
-    }
 
-    public void onLowerBody(View view) {
-        Toast.makeText(this, "Lower body", Toast.LENGTH_SHORT).show();
-    }
+
 
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
@@ -143,29 +145,73 @@ public class SelectBodyPartActivity extends ActionBarActivity implements ActionB
 
         @Override
         public Fragment getItem(int position) {
-            switch (position) {
-                case 0:
-                    return new FrontBodyFragment();
-                case 1:
-                    return new BackBodyFragment();
-            }
-            return null;
+
+            return new BodyFragment(position);
+
         }
     }
 
     public static class FrontBodyFragment extends Fragment {
+
+
+
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
-            return inflater.inflate(R.layout.fragment_select_front, container, false);
+            View.OnTouchListener onTouchListener=new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    android.util.Log.v("test",String.valueOf((int)(event.getX() / v.getWidth()*100))+","+String.valueOf((int)(event.getY() / v.getHeight()*100)));
+                    return true;
+                }
+            };
+
+            View rootView =inflater.inflate(R.layout.fragment_select_front, container, false);
+            rootView.findViewById(R.id.imageView).setOnTouchListener(onTouchListener);
+            return  rootView;
         }
     }
 
-    public static class BackBodyFragment extends Fragment {
+    public static class BodyFragment extends Fragment {
+        long front_or_back;
+        public BodyFragment(){};
+        public BodyFragment(long front_or_back){
+            this.front_or_back=front_or_back;
+        }
+
+
         @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                 Bundle savedInstanceState) {
-            return inflater.inflate(R.layout.fragment_select_back, container, false);
+        public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState){
+
+            View.OnTouchListener onTouchListener=new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    Log.v("test",String.valueOf((int)(event.getX() / v.getWidth()*100))+","+String.valueOf((int)(event.getY() / v.getHeight()*100)));
+                    int x=(int)(event.getX() / v.getWidth()*100);
+                    int y=(int)(event.getY() / v.getHeight()*100);
+                    List<BodyPart>bl= new Select().from(BodyPart.class).execute();
+                    for(BodyPart b: bl) {
+                        if(b.checkIfTouched(x,y,front_or_back)) {
+                             Log.v("BodyPartName",b.name);
+                            Intent intent = new Intent(getActivity(), SelectExerciseActivity.class);
+                            intent.putExtra("bodyPartId", b.getId());
+                            startActivity(intent);
+                            break;
+                        }
+                    }
+
+                    return true;
+                }
+            };
+            View rootView;
+            if (front_or_back==0) {
+
+                    rootView = inflater.inflate(R.layout.fragment_select_front, container, false);
+            }
+            else
+                rootView =inflater.inflate(R.layout.fragment_select_back, container, false);
+            rootView.findViewById(R.id.imageView).setOnTouchListener(onTouchListener);
+            return  rootView;
         }
     }
 }

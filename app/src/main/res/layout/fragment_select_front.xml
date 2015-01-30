@@ -27,31 +27,9 @@
                 android:layout_height="match_parent"
                 android:id="@+id/imageView"
                 android:layout_gravity="center"
-                android:src="@drawable/muscles_front" />
+                android:src="@drawable/muscles_front"
+                />
 
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="110dp"
-                android:id="@+id/upper_body"
-                android:layout_gravity="center_horizontal|top"
-                android:background="#00000000"
-                android:onClick="onUpperBody" />
-
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="110dp"
-                android:id="@+id/thorso"
-                android:layout_gravity="center"
-                android:background="#00000000"
-                android:onClick="onThorso" />
-
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="110dp"
-                android:id="@+id/lower_body"
-                android:layout_gravity="center_horizontal|bottom"
-                android:background="#00000000"
-                android:onClick="onLowerBody" />
         </FrameLayout>
 
     </LinearLayout>
