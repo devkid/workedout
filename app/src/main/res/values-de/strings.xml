@@ -13,4 +13,5 @@
     <string name="title_activity_select_exercise">Übung auswählen</string>
     <string name="weight">Gewicht:</string>
     <string name="start_new_workout">Neuen Workout starten</string>
+    <string name="search_exercises_hint">Suche nach Übungen</string>
 </resources>

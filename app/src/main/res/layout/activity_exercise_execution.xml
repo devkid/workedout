@@ -52,22 +52,27 @@
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="145dp"
+            android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="@string/weight" />
+                android:text="@string/weight"
+                android:layout_marginRight="10dp" />
 
-            <TextView
+            <NumberPicker
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="Medium Text"
-                android:id="@+id/weight"
-                android:editable="true" />
+                android:id="@+id/numberPicker" />
+
         </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"></LinearLayout>
     </LinearLayout>
 </RelativeLayout>

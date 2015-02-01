@@ -10,6 +10,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.NumberPicker;
 import android.widget.TextView;
 
 import de.tu_dresden.inf.es.workedout.workedout.utils.Vector;
@@ -41,9 +42,21 @@ public class ExerciseExecutionActivity extends ActionBarActivity implements Sens
 
         // set exercise name
         Intent intent = getIntent();
-        if(intent.hasExtra("exercise")) {
-            ((TextView) findViewById(R.id.exerciseName)).setText(intent.getStringExtra("exercise"));
-        }
+        String exercise;
+        if(intent.hasExtra("exercise"))
+            exercise = intent.getStringExtra("exercise");
+        else
+            exercise = "";
+        ((TextView) findViewById(R.id.exerciseName)).setText(exercise);
+
+        // set sets count
+        ((TextView) findViewById(R.id.sets)).setText("1/3");
+
+        // set weight
+        NumberPicker np = (NumberPicker) findViewById(R.id.numberPicker);
+        np.setMinValue(0);
+        np.setMaxValue(250);
+        np.setWrapSelectorWheel(true);
     }
 
     protected void onResume() {

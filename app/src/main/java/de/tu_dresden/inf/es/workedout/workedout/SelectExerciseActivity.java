@@ -12,6 +12,7 @@ import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.SearchView;
 import android.widget.Toast;
 
 import com.activeandroid.query.Select;
@@ -30,6 +31,7 @@ public class SelectExerciseActivity extends ActionBarActivity {
 
     private NfcAdapter mNfcAdapter;
     private List<String> mExercises;
+    private List<String> mPreSearchExercises;
     private ListAdapter mExercisesListAdapter;
 
     public SelectExerciseActivity() {
@@ -77,6 +79,50 @@ public class SelectExerciseActivity extends ActionBarActivity {
                 startActivity(intent);
             }
         });
+
+        // search handling
+        SearchView searchView = (SearchView) findViewById(R.id.searchExercises);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                if(mPreSearchExercises == null)
+                    mPreSearchExercises = new ArrayList<>(mExercises);
+
+                mExercises.clear();
+
+                String searchText = "%" + newText + "%";
+
+                List<Exercise> exercises;
+                if (newText.equals(""))
+                    exercises = Exercise.all(Exercise.class);
+                else
+                    exercises = new Select().from(Exercise.class).where("Exercises.name LIKE ?", searchText).execute();
+
+                for (Exercise e : exercises) {
+                    mExercises.add(e.name);
+                }
+                ((BaseAdapter) mExercisesListAdapter).notifyDataSetChanged();
+
+                return false;
+            }
+        });
+        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
+            @Override
+            public boolean onClose() {
+                if(mPreSearchExercises != null) {
+                    mExercises.clear();
+                    mExercises.addAll(mPreSearchExercises);
+                    mPreSearchExercises = null;
+                }
+                return false;
+            }
+        });
+
     }
 
     @Override

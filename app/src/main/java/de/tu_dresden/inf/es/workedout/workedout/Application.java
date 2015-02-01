@@ -17,7 +17,7 @@ public class Application extends android.app.Application {
 
         ActiveAndroid.initialize(this);
 
-        this.initializeBodyParts();
+        this.initializeDatabase();
     }
 
     @Override
@@ -64,9 +64,21 @@ public class Application extends android.app.Application {
         }
     }
 
-    private void initializeBodyParts(){
+    private void initializeDatabase(){
         if(!BodyPart.all(BodyPart.class).isEmpty()) {
             new Delete().from(BodyPart.class).execute();
+        }
+        if(!Exercise.all(Exercise.class).isEmpty()) {
+            new Delete().from(Exercise.class).execute();
+        }
+        if(!Device.all(Device.class).isEmpty()) {
+            new Delete().from(Device.class).execute();
+        }
+        if(!ExerciseBodyParts.all(ExerciseBodyParts.class).isEmpty()) {
+            new Delete().from(ExerciseBodyParts.class).execute();
+        }
+        if(!DeviceExercises.all(DeviceExercises.class).isEmpty()) {
+            new Delete().from(DeviceExercises.class).execute();
         }
 
         /*
