@@ -4,21 +4,21 @@ import com.activeandroid.Model;
 import com.activeandroid.annotation.Column;
 import com.activeandroid.annotation.Table;
 
-@Table(name = "Exercises")
-public class Exercise extends Model {
+@Table(name = "Devices")
+public class Device extends Model {
     @Column(name = "name")
     public String name;
 
-    @Column(name = "youtube")
-    public String youtube;
+    @Column(name = "text_id")
+    public String text_id;
 
-    public Exercise() {
+    public Device() {
         super();
     }
 
-    public Exercise(String name, String youtube) {
+    public Device(String name, String text_id) {
         super();
         this.name = name;
-        this.youtube = youtube;
+        this.text_id = text_id;
     }
 }

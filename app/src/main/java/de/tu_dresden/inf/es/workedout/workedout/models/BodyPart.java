@@ -32,6 +32,7 @@ public class BodyPart extends Model {
     public BodyPart(Boolean front_or_back, String name,
                     Integer leftUpperX, Integer leftUpperY,
                     Integer rightLowerX, Integer rightLowerY) {
+        super();
         this.front_or_back = front_or_back;
         this.name = name;
         this.leftUpperX = leftUpperX;

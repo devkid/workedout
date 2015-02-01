@@ -166,7 +166,7 @@ public class SelectBodyPartActivity extends ActionBarActivity implements ActionB
                 public boolean onTouch(View v, MotionEvent event) {
                     android.util.Log.v("test",
                             String.valueOf((int)(event.getX() / v.getWidth()*100))+","+
-                                    String.valueOf((int)(event.getY() / v.getHeight()*100)));
+                            String.valueOf((int)(event.getY() / v.getHeight()*100)));
                     return true;
                 }
             });
@@ -189,9 +189,9 @@ public class SelectBodyPartActivity extends ActionBarActivity implements ActionB
             View rootView;
 
             if (front_or_back)
-                rootView = inflater.inflate(R.layout.fragment_select_front, container, false);
-            else
                 rootView = inflater.inflate(R.layout.fragment_select_back, container, false);
+            else
+                rootView = inflater.inflate(R.layout.fragment_select_front, container, false);
 
             rootView.findViewById(R.id.imageView).setOnTouchListener(new View.OnTouchListener() {
                 @Override
@@ -209,7 +209,7 @@ public class SelectBodyPartActivity extends ActionBarActivity implements ActionB
                     List<BodyPart> bl = new Select().from(BodyPart.class).execute();
                     for(BodyPart b: bl) {
                         if(b.checkIfTouched(x, y, front_or_back)) {
-                            Log.v("BodyPartName",b.name);
+                            Log.v("BodyPartName", b.name);
 
                             Intent intent = new Intent(getActivity(), SelectExerciseActivity.class);
                             intent.putExtra("bodyPartId", b.getId());

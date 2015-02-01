@@ -12,10 +12,17 @@ import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
+
+import com.activeandroid.query.Select;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import de.tu_dresden.inf.es.workedout.workedout.models.Device;
+import de.tu_dresden.inf.es.workedout.workedout.models.DeviceExercises;
+import de.tu_dresden.inf.es.workedout.workedout.models.Exercise;
+import de.tu_dresden.inf.es.workedout.workedout.models.ExerciseBodyParts;
 import de.tu_dresden.inf.es.workedout.workedout.utils.Nfc;
 
 
@@ -25,6 +32,11 @@ public class SelectExerciseActivity extends ActionBarActivity {
     private List<String> mExercises;
     private ListAdapter mExercisesListAdapter;
 
+    public SelectExerciseActivity() {
+        super();
+        mExercises = new ArrayList<>();
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,7 +45,6 @@ public class SelectExerciseActivity extends ActionBarActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         // list and adapter for recommended exercises
-        mExercises = new ArrayList<>();
         mExercisesListAdapter = new ArrayAdapter<>(getApplicationContext(),
                 R.layout.list_item_black_text, R.id.black_text, mExercises);
         ListView exercisesView = (ListView) findViewById(R.id.exerciseListView);
@@ -92,20 +103,27 @@ public class SelectExerciseActivity extends ActionBarActivity {
      */
 
     public void getExercisesFromDevice(String device) {
+        if(device == null)
+            return;
+
         mExercises.clear();
-        if(device.equals("Bench press")) {
-            mExercises.add("Bankdrücken");
-            mExercises.add("Schräges Bankdrücken");
+        Device d = new Select().from(Device.class).where("text_id = ?", device).executeSingle();
+        if(d == null) {
+            Toast.makeText(this, "Unknown device", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        List<Exercise> exercises = new Select().from(Exercise.class).innerJoin(DeviceExercises.class).on("DeviceExercises.exercise = Exercises.id").where("DeviceExercises.device = ?", d.getId()).execute();
+        for(Exercise e: exercises) {
+            mExercises.add(e.name);
         }
         ((BaseAdapter) mExercisesListAdapter).notifyDataSetChanged();
     }
 
     public void getExercisesFromBodyPart(long bodyPartId) {
         mExercises.clear();
-        if(bodyPartId == 1) {
-            mExercises.add("Shrugs");
-            mExercises.add("Einarmiges Kurzhantel-Rudern");
-            mExercises.add("Reverse Flys");
+        List<Exercise> exercises = new Select().from(Exercise.class).innerJoin(ExerciseBodyParts.class).on("ExerciseBodyParts.exercise = Exercises.id").where("ExerciseBodyParts.bodyPart = ?", bodyPartId).execute();
+        for(Exercise e: exercises) {
+            mExercises.add(e.name);
         }
         ((BaseAdapter) mExercisesListAdapter).notifyDataSetChanged();
     }
