@@ -18,7 +18,17 @@
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:id="@+id/exerciseName"
-            android:layout_gravity="center_horizontal" />
+            android:layout_gravity="center_horizontal"
+            android:text="exercise_name" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="sets"
+            android:id="@+id/sets"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="40dp" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -26,7 +36,8 @@
             android:id="@+id/counter"
             android:layout_gravity="center_horizontal"
             android:textSize="60sp"
-            android:layout_marginTop="60dp" />
+            android:layout_marginTop="50dp"
+            android:text="reps" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -35,6 +46,28 @@
             android:layout_gravity="center_horizontal"
             android:textSize="20sp"
             android:layout_marginTop="80dp"
-            android:fontFamily="monospace" />
+            android:fontFamily="monospace"
+            android:text="debug" />
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="145dp"
+            android:layout_gravity="center_horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="@string/weight" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Medium Text"
+                android:id="@+id/weight"
+                android:editable="true" />
+        </LinearLayout>
     </LinearLayout>
 </RelativeLayout>

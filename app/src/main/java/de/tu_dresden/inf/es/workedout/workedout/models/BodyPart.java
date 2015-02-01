@@ -39,10 +39,11 @@ public class BodyPart extends Model {
         this.rightLowerX = rightLowerX;
         this.rightLowerY = rightLowerY;
     }
-    public boolean checkIfTouched(int x,int y,long front_or_back){
-        if ((this.front_or_back && front_or_back==1 )||(!this.front_or_back && front_or_back==0)) {
+    public boolean checkIfTouched(int x, int y, boolean front_or_back) {
+        if ((this.front_or_back && front_or_back) || (!this.front_or_back && !front_or_back)) {
             return (x >= leftUpperX && x <= rightLowerX && y >= leftUpperY && y <= rightLowerY);
         }
-        else return false;
+        else
+            return false;
     }
 }

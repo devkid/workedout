@@ -56,9 +56,9 @@ public class MainActivity extends ActionBarActivity {
 
     @Override
     protected void onPause() {
-        Nfc.stopForegroundDispatch(this, mNfcAdapter);
         if(mNfcAdapter != null && mNfcAdapter.isEnabled())
-            super.onPause();
+            Nfc.stopForegroundDispatch(this, mNfcAdapter);
+        super.onPause();
     }
 
     @Override

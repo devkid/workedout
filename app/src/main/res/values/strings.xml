@@ -12,5 +12,7 @@
     <string name="title_activity_exercise_execution">Exercising</string>
     <string name="title_activity_select_body_part">Select body part</string>
     <string name="title_activity_select_exercise">Select exercise</string>
+    <string name="weight">Weight:</string>
+    <string name="start_new_workout">Start new Workout</string>
 
 </resources>

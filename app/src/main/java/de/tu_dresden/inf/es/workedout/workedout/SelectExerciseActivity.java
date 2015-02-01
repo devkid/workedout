@@ -1,17 +1,9 @@
 package de.tu_dresden.inf.es.workedout.workedout;
 
-import android.app.Activity;
-import android.app.PendingIntent;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.nfc.NdefMessage;
-import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
-import android.nfc.Tag;
-import android.nfc.tech.Ndef;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,7 +13,6 @@ import android.widget.BaseAdapter;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,16 +43,14 @@ public class SelectExerciseActivity extends ActionBarActivity {
 
         // intent came from NFC event
         mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
-        if(mNfcAdapter != null && mNfcAdapter.isEnabled() &&
-           Nfc.isNfcIntent(intent)) {
+        if(mNfcAdapter != null && mNfcAdapter.isEnabled() && Nfc.isNfcIntent(intent)) {
             handleNfcIntent(intent);
         }
         else {
-            if(intent.hasExtra("bodyPartId")) {
-                getExercisesFromBodyPart(intent.getIntExtra("bodyPartId", 0));
-            } else if (intent.hasExtra("device")) {
+            if(intent.hasExtra("bodyPartId"))
+                getExercisesFromBodyPart(intent.getLongExtra("bodyPartId", 0));
+            else if (intent.hasExtra("device"))
                 getExercisesFromDevice(intent.getStringExtra("device"));
-            }
         }
 
         // list item selection handling
@@ -111,7 +100,7 @@ public class SelectExerciseActivity extends ActionBarActivity {
         ((BaseAdapter) mExercisesListAdapter).notifyDataSetChanged();
     }
 
-    public void getExercisesFromBodyPart(int bodyPartId) {
+    public void getExercisesFromBodyPart(long bodyPartId) {
         mExercises.clear();
         if(bodyPartId == 1) {
             mExercises.add("Shrugs");
@@ -134,9 +123,9 @@ public class SelectExerciseActivity extends ActionBarActivity {
 
     @Override
     protected void onPause() {
-        Nfc.stopForegroundDispatch(this, mNfcAdapter);
         if(mNfcAdapter != null && mNfcAdapter.isEnabled())
-            super.onPause();
+            Nfc.stopForegroundDispatch(this, mNfcAdapter);
+        super.onPause();
     }
 
     @Override
