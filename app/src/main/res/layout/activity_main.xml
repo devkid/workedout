@@ -36,5 +36,13 @@
             android:id="@+id/listView"
             android:layout_gravity="center_horizontal" />
 
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/show_statistics"
+            android:id="@+id/statistics"
+            android:layout_gravity="center_horizontal"
+            android:onClick="onStatistics" />
+
     </LinearLayout>
 </RelativeLayout>

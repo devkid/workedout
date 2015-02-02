@@ -43,6 +43,11 @@ public class MainActivity extends ActionBarActivity {
         startActivity(intent);
     }
 
+    public void onStatistics(View view) {
+        Intent intent = new Intent(this, StatisticsActivity.class);
+        startActivity(intent);
+    }
+
     /*
         NFC handling
      */

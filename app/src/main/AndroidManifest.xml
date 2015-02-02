@@ -3,6 +3,8 @@
     package="de.tu_dresden.inf.es.workedout.workedout" >
 
     <uses-permission android:name="android.permission.NFC" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+
     <uses-feature android:name="android.hardware.nfc" />
 
     <application
@@ -28,13 +30,14 @@
             android:name=".ExerciseExecutionActivity"
             android:label="@string/title_activity_exercise_execution" >
         </activity>
-
         <activity
             android:name=".SelectExerciseActivity"
             android:label="@string/title_activity_select_exercise" >
             <intent-filter>
                 <action android:name="android.nfc.action.NDEF_DISCOVERED" />
+
                 <category android:name="android.intent.category.DEFAULT" />
+
                 <data android:mimeType="x-application/workedout-device" />
             </intent-filter>
         </activity>
@@ -46,6 +49,11 @@
         <meta-data
             android:name="AA_DB_VERSION"
             android:value="1" />
+
+        <activity
+            android:name=".StatisticsActivity"
+            android:label="@string/title_activity_statistics" >
+        </activity>
     </application>
 
 </manifest>
