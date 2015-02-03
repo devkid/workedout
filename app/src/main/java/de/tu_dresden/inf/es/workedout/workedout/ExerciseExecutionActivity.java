@@ -6,10 +6,13 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.os.Vibrator;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.NumberPicker;
 import android.widget.TextView;
 
@@ -27,6 +30,8 @@ public class ExerciseExecutionActivity extends ActionBarActivity implements Sens
                    mDistance = new Vector(0, 0, 0);
     private boolean mLimited = false;
     private int mCounter = 0;
+    private int mSet = 0;
+    private long mExerciseId = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,11 +62,13 @@ public class ExerciseExecutionActivity extends ActionBarActivity implements Sens
         np.setMinValue(0);
         np.setMaxValue(250);
         np.setWrapSelectorWheel(true);
+
+        onNextSet(null);
     }
 
     protected void onResume() {
         super.onResume();
-        mSensorManager.registerListener(this, mAccelerometer, SensorManager.SENSOR_DELAY_FASTEST);
+        mSensorManager.registerListener(this, mAccelerometer, SensorManager.SENSOR_DELAY_GAME);
     }
 
     protected void onPause() {
@@ -71,7 +78,12 @@ public class ExerciseExecutionActivity extends ActionBarActivity implements Sens
 
     private void updateCounter() {
         TextView textView = (TextView) findViewById(R.id.counter);
-        textView.setText(String.format("%d / %d", ++mCounter/2, 15));
+        textView.setText(String.format("%d / %d", ++mCounter / 2, 15));
+
+        if(mCounter == 30) {
+            Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+            v.vibrate(new long[] {0, 300, 100, 300, 100, 300}, -1);
+        }
     }
 
     @Override
@@ -85,7 +97,6 @@ public class ExerciseExecutionActivity extends ActionBarActivity implements Sens
 
         if(mTime != 0) {
             Vector v = new Vector(event.values[0], event.values[1], event.values[2]);
-            double length = v.length();
 
             // detect gravity by a low pass filter
             mGravity = mGravity.multiplied(alpha).added(v.multiplied(1 - alpha));
@@ -95,6 +106,9 @@ public class ExerciseExecutionActivity extends ActionBarActivity implements Sens
 
             // integrate to get velocity
             mVelocity.add(v.multiplied(elapsedTime));
+
+            // low pass filtering
+            mVelocity = mVelocity.multiplied(alpha).added(v.multiplied(1 - alpha));
 
             // integrate again to get distance
             mDistance.add(mVelocity.multiplied(elapsedTime));
@@ -117,6 +131,10 @@ public class ExerciseExecutionActivity extends ActionBarActivity implements Sens
     }
 
     @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_exercise_execution, menu);
         return true;
@@ -134,7 +152,21 @@ public class ExerciseExecutionActivity extends ActionBarActivity implements Sens
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+    public void onNextSet(View view) {
+        if(mSet == 3) {
+            finish();
+        } else {
+            TextView sets = (TextView) findViewById(R.id.sets);
+            sets.setText(getString(R.string.set) + ": " + String.valueOf(++mSet) + "/3");
+            if(mSet == 3) {
+                ((Button) findViewById(R.id.next_set)).setText(getString(R.string.finish_exercise));
+            }
+        }
+    }
+
+    public void onStatistics(View view) {
+        Intent intent = new Intent(this, StatisticsActivity.class);
+        intent.putExtra("exercise", mExerciseId);
+        startActivity(intent);
     }
 }

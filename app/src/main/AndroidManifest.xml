@@ -4,6 +4,9 @@
 
     <uses-permission android:name="android.permission.NFC" />
 
+    <uses-permission android:name="android.permission.VIBRATE" />
+
+
     <uses-feature android:name="android.hardware.nfc" />
 
     <application
@@ -50,12 +53,12 @@
             android:value="1" />
 
         <activity
-            android:name=".SelectBodyPartActivity$WorkOutPlanActivity"
+            android:name=".WorkOutPlanActivity"
             android:label="@string/title_activity_work_out_plan" >
         </activity>
         <activity
-            android:name=".WorkOutPlanActivity"
-            android:label="@string/title_activity_work_out_plan" >
+            android:name=".StatisticsActivity"
+            android:label="@string/title_activity_statistics" >
         </activity>
     </application>
 

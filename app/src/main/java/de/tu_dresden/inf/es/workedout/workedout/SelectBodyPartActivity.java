@@ -191,13 +191,10 @@ public class SelectBodyPartActivity extends ActionBarActivity implements ActionB
                         if(b.checkIfTouched(x, y, front_or_back)) {
                             Log.v("BodyPartName", b.name);
 
-
-                            Intent intent =new Intent((getActivity()), WorkOutPlanActivity.class);
-                            startActivity(intent);
-                            /*Intent intent = new Intent(getActivity(), SelectExerciseActivity.class);
+                            Intent intent = new Intent(getActivity(), SelectExerciseActivity.class);
                             intent.putExtra("bodyPartId", b.getId());
                             startActivity(intent);
-                            break;*/
+                            break;
 
                         }
                     }

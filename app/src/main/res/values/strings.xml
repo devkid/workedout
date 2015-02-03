@@ -18,5 +18,13 @@
     <string name="title_activity_work_out_plan">WorkOutPlanActivity</string>
     <string name="NewWorkoutPlan">Neuer WorkOutPlan</string>
 
+    <string name="next_set">Next set</string>
+    <string name="statistics">Statistics</string>
+    <string name="title_activity_statistics">Statistics</string>
+    <string name="show_statistics">Show statistics</string>
+    <string name="your_achievments">Your achievments</string>
+    <string name="set">Set</string>
+    <string name="finish_exercise">Finish exercise</string>
+
 
 </resources>
