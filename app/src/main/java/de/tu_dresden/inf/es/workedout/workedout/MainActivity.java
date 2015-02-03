@@ -1,5 +1,8 @@
 package de.tu_dresden.inf.es.workedout.workedout;
 
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.nfc.NfcAdapter;
 import android.os.Bundle;
@@ -9,6 +12,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
+import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
@@ -17,6 +22,7 @@ import com.activeandroid.query.Select;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.tu_dresden.inf.es.workedout.workedout.models.Exercise;
 import de.tu_dresden.inf.es.workedout.workedout.models.WorkOutPlan;
 import de.tu_dresden.inf.es.workedout.workedout.utils.Nfc;
 
@@ -24,6 +30,8 @@ import de.tu_dresden.inf.es.workedout.workedout.utils.Nfc;
 public class MainActivity extends ActionBarActivity {
 
     NfcAdapter mNfcAdapter;
+    List<String> mRecentWorkouts = new ArrayList<>();
+    private ListAdapter mRecentWorkoutsAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,18 +40,12 @@ public class MainActivity extends ActionBarActivity {
 
         mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
 
-        // Fill list of recent workouts
-        List<String> recentWorkouts = new ArrayList<>();
-        List<WorkOutPlan> workOutPlanlIST=new Select().from(WorkOutPlan.class).where("saveflag=1").execute();
-        for (WorkOutPlan w :workOutPlanlIST) recentWorkouts.add(w.name);
-        if (recentWorkouts.isEmpty())
-            recentWorkouts.add(getString(R.string.no_workouts));
-
-        ListAdapter adapter = new ArrayAdapter<>(getApplicationContext(),
-                R.layout.list_item_black_text, R.id.black_text, recentWorkouts);
+        mRecentWorkoutsAdapter = new ArrayAdapter<>(getApplicationContext(),
+                R.layout.list_item_black_text, R.id.black_text, mRecentWorkouts);
 
         ListView recentWorkoutsView = (ListView) findViewById(R.id.listView);
-        recentWorkoutsView.setAdapter(adapter);
+        recentWorkoutsView.setAdapter(mRecentWorkoutsAdapter);
+
         // list item selection handling
         ((ListView)findViewById(R.id.listView)).setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -51,37 +53,30 @@ public class MainActivity extends ActionBarActivity {
                 // get selected entry
                 String entry = (String) parent.getItemAtPosition(position);
 
-                // start exercise
-                Intent intent = new Intent(MainActivity.this, WorkOutPlanActivity.class);
-                intent.putExtra("workOutPlan", entry);
-                startActivity(intent);
+                if (!entry.equals("No workouts yet!")) {
+                    // start workout plan
+                    Intent intent = new Intent(MainActivity.this, WorkOutPlanActivity.class);
+                    intent.putExtra("workOutPlan", entry);
+                    startActivity(intent);
+                }
             }
         });
     }
-
-    public void onStartNewWorkout(View view) {
-
-        Intent intent = new Intent(this, WorkOutPlanActivity.class);
-        intent.putExtra("newPlan",true);
-        startActivity(intent);
-    }
-
-
-    public void onStatistics(View view) {
-        Intent intent = new Intent(this, StatisticsActivity.class);
-        startActivity(intent);
-    }
-
-
-    /*
-        NFC handling
-     */
 
     @Override
     protected void onResume() {
         super.onResume();
         if(mNfcAdapter != null && mNfcAdapter.isEnabled())
             Nfc.setupForegroundDispatch(this, mNfcAdapter);
+
+        // Fill list of recent workouts
+        mRecentWorkouts.clear();
+        List<WorkOutPlan> workOutPlans = new Select().from(WorkOutPlan.class).execute();
+        for (WorkOutPlan w: workOutPlans)
+            mRecentWorkouts.add(w.name);
+        if (mRecentWorkouts.isEmpty())
+            mRecentWorkouts.add(getString(R.string.no_workouts));
+        ((BaseAdapter) mRecentWorkoutsAdapter).notifyDataSetChanged();
     }
 
     @Override
@@ -91,12 +86,46 @@ public class MainActivity extends ActionBarActivity {
         super.onPause();
     }
 
+    public void onStartNewWorkout(View view) {
+        final EditText name = new EditText(this);
+        new AlertDialog.Builder(this)
+                .setTitle("Neuer Workout Plan")
+                .setMessage("Gib dem neuen Workout Plan einen Namen:")
+                .setView(name)
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        Intent intent = new Intent(MainActivity.this, WorkOutPlanActivity.class);
+                        intent.putExtra("name", name.getText().toString());
+                        startActivity(intent);
+                    }
+                }).setNegativeButton("Abbrechen", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                    }
+                }).show();
+    }
+
+
+    public void onStatistics(View view) {
+        Intent intent = new Intent(this, SelectExerciseActivity.class);
+        startActivityForResult(intent, 1);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(resultCode == Activity.RESULT_OK) {
+            Exercise ex = Exercise.load(Exercise.class, data.getLongExtra("exercise", 0));
+            Intent intent = new Intent(this, StatisticsActivity.class);
+            startActivity(intent);
+        }
+    }
+
+
+    /*
+        NFC handling
+     */
+
     @Override
     protected void onNewIntent(Intent intent) {
-        String device = new String(Nfc.getNdefRecord(intent).getPayload());
-        Intent newIntent = new Intent(this, SelectExerciseActivity.class);
-        newIntent.putExtra("device", device);
-        startActivity(newIntent);
     }
 
 

@@ -118,6 +118,8 @@ public class Application extends android.app.Application {
         Exercise bankdruecken = new Exercise("Bankdrücken", null);
         Exercise beinpresse = new Exercise("Beinpresse", null);
         Exercise wadenwippen = new Exercise("Wadenwippen", null);
+        Exercise kurzhantelCurls = new Exercise("Kurzhantel-Curls", null);
+        Exercise trizepsdruecken = new Exercise("Trizepsdrücken", null);
 
         addExercises(new Exercise[] {
                 bankdruecken,
@@ -125,11 +127,11 @@ public class Application extends android.app.Application {
         }, shoulderBreast);
 
         addExercises(new Exercise[] {
-                new Exercise("Kurzhantel-Curls", null)
+                kurzhantelCurls
         }, armsFront);
 
         addExercises(new Exercise[]{
-                new Exercise("Trizepsdrücken", null),
+                trizepsdruecken,
                 engesBankdruecken
         }, armsBack);
 
@@ -169,11 +171,16 @@ public class Application extends android.app.Application {
             WorkOutPlans
          */
 
-        WorkOutPlan legD;
-        legD = new WorkOutPlan("LegDay");
-        legD.trueSave();
-        legD.addExercise(beinpresse);
-        legD.addExercise(wadenwippen);
+        WorkOutPlan legDay = new WorkOutPlan("Leg Day");
+        legDay.save();
+        legDay.addExercise(beinpresse);
+        legDay.addExercise(wadenwippen);
+
+        WorkOutPlan armDay = new WorkOutPlan("Arm Day");
+        armDay.save();
+        armDay.addExercise(engesBankdruecken);
+        armDay.addExercise(kurzhantelCurls);
+        armDay.addExercise(trizepsdruecken);
 
     }
 }

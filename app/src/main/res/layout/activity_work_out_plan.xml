@@ -18,7 +18,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/workOutPlanName"
-            android:text="@string/NewWorkoutPlan"
+            android:text=""
             style="?android:attr/listSeparatorTextViewStyle"/>
         <ListView
             android:layout_width="fill_parent"
@@ -34,14 +34,8 @@
             android:layout_width="wrap_content"
             android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:text="@string/new_Exercise"
+            android:text="@string/add_exercise"
             android:onClick="onAddNewExercise"/>
-        <Button
-            android:layout_weight="1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/saveWorkeoutplan"
-            android:onClick="onSaveWorkoutPlan"/>
 
         </LinearLayout>
 

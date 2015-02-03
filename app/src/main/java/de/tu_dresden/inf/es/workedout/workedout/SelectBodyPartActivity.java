@@ -1,9 +1,11 @@
 package de.tu_dresden.inf.es.workedout.workedout;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.nfc.NfcAdapter;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
@@ -23,7 +25,6 @@ import com.activeandroid.query.Select;
 import java.util.List;
 
 import de.tu_dresden.inf.es.workedout.workedout.models.BodyPart;
-import de.tu_dresden.inf.es.workedout.workedout.models.WorkOutPlan;
 import de.tu_dresden.inf.es.workedout.workedout.utils.Nfc;
 
 
@@ -92,7 +93,15 @@ public class SelectBodyPartActivity extends ActionBarActivity implements ActionB
         String device = new String(Nfc.getNdefRecord(intent).getPayload());
         Intent newIntent = new Intent(this, SelectExerciseActivity.class);
         newIntent.putExtra("device", device);
-        startActivity(newIntent);
+        startActivityForResult(newIntent, 1);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(resultCode == Activity.RESULT_OK) {
+            setResult(Activity.RESULT_OK, data);
+            finish();
+        }
     }
 
     @Override
@@ -155,7 +164,6 @@ public class SelectBodyPartActivity extends ActionBarActivity implements ActionB
     public static class BodyFragment extends Fragment {
         boolean front_or_back;
 
-
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
@@ -164,7 +172,6 @@ public class SelectBodyPartActivity extends ActionBarActivity implements ActionB
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
 
             View rootView;
 
@@ -193,9 +200,8 @@ public class SelectBodyPartActivity extends ActionBarActivity implements ActionB
 
                             Intent intent = new Intent(getActivity(), SelectExerciseActivity.class);
                             intent.putExtra("bodyPartId", b.getId());
-                            startActivity(intent);
+                            startActivityForResult(intent, 1);
                             break;
-
                         }
                     }
 
@@ -204,6 +210,15 @@ public class SelectBodyPartActivity extends ActionBarActivity implements ActionB
 
             });
             return  rootView;
+        }
+
+        @Override
+        public void onActivityResult(int requestCode, int resultCode, Intent data) {
+            if(resultCode == Activity.RESULT_OK) {
+                FragmentActivity activity = getActivity();
+                activity.setResult(Activity.RESULT_OK, data);
+                activity.finish();
+            }
         }
     }
 

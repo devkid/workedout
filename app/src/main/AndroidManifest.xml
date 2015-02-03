@@ -58,10 +58,6 @@
             android:name=".StatisticsActivity"
             android:label="@string/title_activity_statistics" >
         </activity>
-        <activity
-            android:name=".SaveWorkOutPlanActivity"
-            android:label="@string/title_activity_save_work_out_plan" >
-        </activity>
     </application>
 
 </manifest>

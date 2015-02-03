@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="title_activity_exercise_execution">Trainieren</string>
+    <string name="title_activity_select_body_part">Körperteil auswählen</string>
+    <string name="title_activity_select_exercise">Übung auswählen</string>
+    <string name="title_activity_statistics">Statistiken</string>
+
     <string name="action_settings">Einstellungen</string>
     <string name="back_body">Rückseite</string>
     <string name="front_body">Vorderseite</string>
@@ -7,18 +12,17 @@
     <string name="no_workouts">Noch keine Workouts!</string>
     <string name="recent_workouts">Letzte Workouts:</string>
     <string name="rfid_hint">Tipp: Ein Trainingsgerät hat ein RFID-Tag? Halte einfach dein Handy dagegen!</string>
-    <string name="title_activity_exercise_execution">Trainieren</string>
-    <string name="title_activity_select_body_part">Körperteil auswählen</string>
     <string name="select_body_part"></string>
-    <string name="title_activity_select_exercise">Übung auswählen</string>
     <string name="weight">Gewicht:</string>
     <string name="start_new_workout">Neuen Workout starten</string>
     <string name="search_exercises_hint">Suche nach Übungen</string>
     <string name="next_set">Nächster Satz</string>
     <string name="statistics">Statistiken</string>
-    <string name="title_activity_statistics">Statistiken</string>
     <string name="show_statistics">Statistiken zeigen</string>
-    <string name="your_achievments">Deine Erfolge</string>
+    <string name="your_achievements">Deine Erfolge</string>
     <string name="set">Satz</string>
     <string name="finish_exercise">Übung beenden</string>
+    <string name="title_activity_work_out_plan">Workout Plan</string>
+    <string name="add_exercise">Übung hinzufügen</string>
+    <string name="new_workout_plan">Neuer Workout Plan</string>
 </resources>

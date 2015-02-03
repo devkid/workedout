@@ -1,8 +1,6 @@
 package de.tu_dresden.inf.es.workedout.workedout.models;
 
 
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.util.Log;
 
 import com.activeandroid.Model;
@@ -11,11 +9,7 @@ import com.activeandroid.annotation.Table;
 import com.activeandroid.query.Delete;
 import com.activeandroid.query.Select;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Date;
-
-import de.tu_dresden.inf.es.workedout.workedout.WorkOutPlanActivity;
 
 /**
  * Created by vincent on 29.01.15.
@@ -24,9 +18,6 @@ import de.tu_dresden.inf.es.workedout.workedout.WorkOutPlanActivity;
 public class WorkOutPlan extends Model {
     @Column(name = "name")
     public String name;
-    @Column( name ="saveflag")
-    public boolean saveflag;
-
 
     public WorkOutPlan(){
         super();
@@ -34,25 +25,25 @@ public class WorkOutPlan extends Model {
     public WorkOutPlan(String name){
         super();
         this.name=name;
-        this.saveflag=false;
-
     }
+
     public void addExercise(Exercise e){
-        WorkOutPlanExercises w=new WorkOutPlanExercises(this ,e);
+        WorkOutPlanExercises w = new WorkOutPlanExercises(this ,e);
         w.save();
     }
-    public ArrayList<Exercise>getExercises(){
-       ArrayList<Exercise>exerciseArrayList= new Select().from(Exercise.class).innerJoin(WorkOutPlanExercises.class).on("WorkOutPlanExercises.exercise = Exercises.id").where("WorkOutPlanExercises.workOutPlan = ?", this.getId()).execute();
-       if (exerciseArrayList==null) Log.v("bla", "bla");
+
+    public ArrayList<Exercise> getExercises(){
+        ArrayList<Exercise> exerciseArrayList = new ArrayList<>();
+        for(Model we: new Select().from(WorkOutPlanExercises.class).innerJoin(Exercise.class).on("WorkOutPlanExercises.exercise = Exercises.id").where("WorkOutPlanExercises.workOutPlan = ?", getId()).execute())
+            exerciseArrayList.add(((WorkOutPlanExercises) we).exercise);
         return exerciseArrayList;
     }
-    public ArrayList<Exercise>removeExercise(Exercise e){
-        return new Delete().from(WorkOutPlanExercises.class).where("exercise = ? and workOutPlan=?", e.getId(), this.getId()).execute();
-    }
 
-    public void trueSave(){
-        this.saveflag=true;
-        super.save();
-
+    public void removeExercise(Exercise e){
+        for(Model m: new Select().from(WorkOutPlanExercises.class).execute()) {
+            WorkOutPlanExercises ex = (WorkOutPlanExercises) m;
+            Log.v("WorkOutPlan <-> Exercise", getId().toString() + " " + ex.exercise.getId().toString());
+        }
+        new Delete().from(WorkOutPlanExercises.class).where("exercise = ? and workOutPlan = ?", e.getId(), this.getId()).execute();
     }
 }

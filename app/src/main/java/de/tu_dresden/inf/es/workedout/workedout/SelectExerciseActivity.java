@@ -1,5 +1,6 @@
 package de.tu_dresden.inf.es.workedout.workedout;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.nfc.NfcAdapter;
 import android.os.Bundle;
@@ -52,7 +53,7 @@ public class SelectExerciseActivity extends ActionBarActivity {
         ListView exercisesView = (ListView) findViewById(R.id.exerciseListView);
         exercisesView.setAdapter(mExercisesListAdapter);
 
-        Intent intent = getIntent();
+        final Intent intent = getIntent();
 
         // intent came from NFC event
         mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
@@ -64,6 +65,14 @@ public class SelectExerciseActivity extends ActionBarActivity {
                 getExercisesFromBodyPart(intent.getLongExtra("bodyPartId", 0));
             else if (intent.hasExtra("device"))
                 getExercisesFromDevice(intent.getStringExtra("device"));
+            else {
+                mExercises.clear();
+                List<Exercise> exercises = new Select().from(Exercise.class).execute();
+                for (Exercise e : exercises) {
+                    mExercises.add(e.name);
+                }
+            }
+
         }
 
         // list item selection handling
@@ -73,10 +82,11 @@ public class SelectExerciseActivity extends ActionBarActivity {
                 // get selected entry
                 String entry = (String) parent.getItemAtPosition(position);
 
-                // start exercise
-                Intent intent = new Intent(SelectExerciseActivity.this, WorkOutPlanActivity.class);
-                intent.putExtra("exercise", entry);
-                startActivity(intent);
+                // back to WorkOut Plan
+                Intent intent = new Intent();
+                intent.putExtra("exercise", new Select().from(Exercise.class).where("name = ?", entry).executeSingle().getId());
+                setResult(Activity.RESULT_OK, intent);
+                finish();
             }
         });
 

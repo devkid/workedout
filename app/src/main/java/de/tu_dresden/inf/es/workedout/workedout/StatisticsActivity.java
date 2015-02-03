@@ -1,5 +1,7 @@
 package de.tu_dresden.inf.es.workedout.workedout;
 
+import android.content.Intent;
+import android.nfc.NfcAdapter;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -12,8 +14,12 @@ import com.github.mikephil.charting.data.LineDataSet;
 
 import java.util.ArrayList;
 
+import de.tu_dresden.inf.es.workedout.workedout.utils.Nfc;
+
 
 public class StatisticsActivity extends ActionBarActivity {
+
+    NfcAdapter mNfcAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,6 +27,8 @@ public class StatisticsActivity extends ActionBarActivity {
         setContentView(R.layout.activity_statistics);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
 
         ArrayList<Entry> weight = new ArrayList<>();
         weight.add(new Entry(20, 0));
@@ -50,7 +58,31 @@ public class StatisticsActivity extends ActionBarActivity {
                 new ArrayList<LineDataSet>() {{ add(weightDataSet); add(repetitionsDataSet); }});
         LineChart chartView = (LineChart) findViewById(R.id.chart);
         chartView.setData(data);
-        chartView.setDescription(getString(R.string.your_achievments));
+        chartView.setDescription(getString(R.string.your_achievements));
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (mNfcAdapter != null && mNfcAdapter.isEnabled())
+            Nfc.setupForegroundDispatch(this, mNfcAdapter);
+    }
+
+    @Override
+    protected void onPause() {
+
+        if(mNfcAdapter != null && mNfcAdapter.isEnabled())
+            Nfc.stopForegroundDispatch(this, mNfcAdapter);
+        super.onPause();
+
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        String device = new String(Nfc.getNdefRecord(intent).getPayload());
+        Intent newIntent = new Intent(this, SelectExerciseActivity.class);
+        newIntent.putExtra("device", device);
+        startActivityForResult(newIntent, 1);
     }
 
 

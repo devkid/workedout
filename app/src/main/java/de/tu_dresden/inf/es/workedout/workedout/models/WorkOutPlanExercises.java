@@ -10,14 +10,15 @@ import com.activeandroid.annotation.Table;
 @Table(name="WorkOutPlanExercises")
 public class WorkOutPlanExercises extends Model {
     @Column(name="exercise")
-    Exercise exercise;
+    public Exercise exercise;
+
     @Column(name="workOutPlan")
-    WorkOutPlan workOutPlan;
+    public WorkOutPlan workOutPlan;
 
     public WorkOutPlanExercises(){super();}
     public WorkOutPlanExercises(WorkOutPlan workOutPlan,Exercise exercise){
         super();
-        this.workOutPlan=workOutPlan;
-        this.exercise=exercise;
+        this.workOutPlan = workOutPlan;
+        this.exercise = exercise;
     }
 }

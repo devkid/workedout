@@ -16,6 +16,7 @@ import android.widget.Button;
 import android.widget.NumberPicker;
 import android.widget.TextView;
 
+import de.tu_dresden.inf.es.workedout.workedout.models.Exercise;
 import de.tu_dresden.inf.es.workedout.workedout.utils.Vector;
 
 
@@ -28,6 +29,8 @@ public class ExerciseExecutionActivity extends ActionBarActivity implements Sens
     private Vector mGravity  = new Vector(0, 0, 0),
                    mVelocity = new Vector(0, 0, 0),
                    mDistance = new Vector(0, 0, 0);
+    private Vector mLastVector = null;
+    private int mLastDirection = 1;
     private boolean mLimited = false;
     private int mCounter = 0;
     private int mSet = 0;
@@ -47,12 +50,8 @@ public class ExerciseExecutionActivity extends ActionBarActivity implements Sens
 
         // set exercise name
         Intent intent = getIntent();
-        String exercise;
-        if(intent.hasExtra("exercise"))
-            exercise = intent.getStringExtra("exercise");
-        else
-            exercise = "";
-        ((TextView) findViewById(R.id.exerciseName)).setText(exercise);
+        Exercise ex = Exercise.load(Exercise.class, intent.getLongExtra("exercise", 0));
+        ((TextView) findViewById(R.id.exerciseName)).setText(ex.name);
 
         // set sets count
         ((TextView) findViewById(R.id.sets)).setText("1/3");
@@ -88,46 +87,31 @@ public class ExerciseExecutionActivity extends ActionBarActivity implements Sens
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-
         final double alpha = 0.8;
-        final double thresh = 0.2;
+        final double thresh = 0.4;
 
-        final long time = System.nanoTime();
-        final double elapsedTime = (time - mTime) * 1e-9;
+        Vector v = new Vector(event.values[0], event.values[1], event.values[2]);
+        double length = v.length();
 
-        if(mTime != 0) {
-            Vector v = new Vector(event.values[0], event.values[1], event.values[2]);
+        // detect gravity by a low pass filter
+        mGravity = mGravity.multiplied(alpha).added(v.multiplied(1 - alpha));
 
-            // detect gravity by a low pass filter
-            mGravity = mGravity.multiplied(alpha).added(v.multiplied(1 - alpha));
+        // real acceleration
+        v.subtract(mGravity);
 
-            // real acceleration
-            v.subtract(mGravity);
+        // Debug Output
+        ((TextView) findViewById(R.id.debug)).setText(v.toString("\n"));
 
-            // integrate to get velocity
-            mVelocity.add(v.multiplied(elapsedTime));
-
-            // low pass filtering
-            mVelocity = mVelocity.multiplied(alpha).added(v.multiplied(1 - alpha));
-
-            // integrate again to get distance
-            mDistance.add(mVelocity.multiplied(elapsedTime));
-
-            // Debug Output
-            ((TextView) findViewById(R.id.debug)).setText(mVelocity.toString("\n") + "\n" + String.valueOf(mLimited));
-
-            //double scalarProduct = mVelocity.scalarProduct(lastVelocity);
-
-            // detect zero crossing of velocity and limit detection there
-            if (mVelocity.length() <= thresh && !mLimited) {
-                mLimited = true;
+        if(mLastVector != null && length != 0) {
+            double scalarProduct = v.scalarProduct(mLastVector);
+            if (((scalarProduct < 0 && mLastDirection ==  1) ||
+                    (scalarProduct > 0 && mLastDirection == -1)) &&
+                    (mLastVector.length() - v.length()) > thresh) {
+                mLastDirection *= -1;
                 updateCounter();
-            } else if(mVelocity.length() > thresh && mLimited) {
-                mLimited = false;
             }
         }
-
-        mTime = time;
+        mLastVector = v;
     }
 
     @Override
@@ -161,6 +145,8 @@ public class ExerciseExecutionActivity extends ActionBarActivity implements Sens
             if(mSet == 3) {
                 ((Button) findViewById(R.id.next_set)).setText(getString(R.string.finish_exercise));
             }
+            mCounter = 0;
+            updateCounter();
         }
     }
 
