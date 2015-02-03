@@ -12,6 +12,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
+import com.activeandroid.query.Select;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,7 +34,7 @@ public class MainActivity extends ActionBarActivity {
 
         // Fill list of recent workouts
         List<String> recentWorkouts = new ArrayList<>();
-        List<WorkOutPlan> workOutPlanlIST=WorkOutPlan.all(WorkOutPlan.class);
+        List<WorkOutPlan> workOutPlanlIST=new Select().from(WorkOutPlan.class).where("saveflag=1").execute();
         for (WorkOutPlan w :workOutPlanlIST) recentWorkouts.add(w.name);
         if (recentWorkouts.isEmpty())
             recentWorkouts.add(getString(R.string.no_workouts));
@@ -58,7 +60,9 @@ public class MainActivity extends ActionBarActivity {
     }
 
     public void onStartNewWorkout(View view) {
-        Intent intent = new Intent(this, SelectBodyPartActivity.class);
+
+        Intent intent = new Intent(this, WorkOutPlanActivity.class);
+        intent.putExtra("newPlan",true);
         startActivity(intent);
     }
 

@@ -74,7 +74,7 @@ public class SelectExerciseActivity extends ActionBarActivity {
                 String entry = (String) parent.getItemAtPosition(position);
 
                 // start exercise
-                Intent intent = new Intent(SelectExerciseActivity.this, ExerciseExecutionActivity.class);
+                Intent intent = new Intent(SelectExerciseActivity.this, WorkOutPlanActivity.class);
                 intent.putExtra("exercise", entry);
                 startActivity(intent);
             }

@@ -27,11 +27,21 @@
             android:layout_weight="1" />
         <LinearLayout
             android:layout_width="fill_parent"
-            android:layout_height="@dimen/abc_action_button_min_height_material">
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
 
         <Button
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent" />
+            android:layout_width="wrap_content"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="@string/new_Exercise"
+            android:onClick="onAddNewExercise"/>
+        <Button
+            android:layout_weight="1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/saveWorkeoutplan"
+            android:onClick="onSaveWorkoutPlan"/>
 
         </LinearLayout>
 

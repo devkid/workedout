@@ -3,9 +3,7 @@
     package="de.tu_dresden.inf.es.workedout.workedout" >
 
     <uses-permission android:name="android.permission.NFC" />
-
     <uses-permission android:name="android.permission.VIBRATE" />
-
 
     <uses-feature android:name="android.hardware.nfc" />
 
@@ -50,7 +48,7 @@
             android:value="workedout.db" />
         <meta-data
             android:name="AA_DB_VERSION"
-            android:value="1" />
+            android:value="4" />
 
         <activity
             android:name=".WorkOutPlanActivity"
@@ -59,6 +57,10 @@
         <activity
             android:name=".StatisticsActivity"
             android:label="@string/title_activity_statistics" >
+        </activity>
+        <activity
+            android:name=".SaveWorkOutPlanActivity"
+            android:label="@string/title_activity_save_work_out_plan" >
         </activity>
     </application>
 

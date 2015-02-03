@@ -171,7 +171,7 @@ public class Application extends android.app.Application {
 
         WorkOutPlan legD;
         legD = new WorkOutPlan("LegDay");
-        legD.save();
+        legD.trueSave();
         legD.addExercise(beinpresse);
         legD.addExercise(wadenwippen);
 
