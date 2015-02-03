@@ -23,6 +23,7 @@ import com.activeandroid.query.Select;
 import java.util.List;
 
 import de.tu_dresden.inf.es.workedout.workedout.models.BodyPart;
+import de.tu_dresden.inf.es.workedout.workedout.models.WorkOutPlan;
 import de.tu_dresden.inf.es.workedout.workedout.utils.Nfc;
 
 
@@ -73,15 +74,17 @@ public class SelectBodyPartActivity extends ActionBarActivity implements ActionB
     @Override
     protected void onResume() {
         super.onResume();
-        if(mNfcAdapter != null && mNfcAdapter.isEnabled())
+        if (mNfcAdapter != null && mNfcAdapter.isEnabled())
             Nfc.setupForegroundDispatch(this, mNfcAdapter);
     }
 
     @Override
     protected void onPause() {
+
         if(mNfcAdapter != null && mNfcAdapter.isEnabled())
             Nfc.stopForegroundDispatch(this, mNfcAdapter);
         super.onPause();
+
     }
 
     @Override
@@ -100,7 +103,7 @@ public class SelectBodyPartActivity extends ActionBarActivity implements ActionB
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch(item.getItemId()) {
+        switch (item.getItemId()) {
             case android.R.id.home:
                 finish();
                 return true;
@@ -123,18 +126,13 @@ public class SelectBodyPartActivity extends ActionBarActivity implements ActionB
     public void onTabReselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
     }
 
-    public void onUpperBody(View view) {
-        Intent intent = new Intent(this, SelectExerciseActivity.class);
-        intent.putExtra("bodyPartId", 1);
-        startActivity(intent);
-    }
-
-
 
 
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
-        public SectionsPagerAdapter(FragmentManager fm) { super(fm); }
+        public SectionsPagerAdapter(FragmentManager fm) {
+            super(fm);
+        }
 
         @Override
         public int getCount() {
@@ -153,29 +151,10 @@ public class SelectBodyPartActivity extends ActionBarActivity implements ActionB
         }
     }
 
-    public static class FrontBodyFragment extends Fragment {
-
-
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                 Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_select_front, container, false);
-            rootView.findViewById(R.id.imageView).setOnTouchListener(new View.OnTouchListener() {
-                @Override
-                public boolean onTouch(View v, MotionEvent event) {
-                    android.util.Log.v("test",
-                            String.valueOf((int)(event.getX() / v.getWidth()*100))+","+
-                            String.valueOf((int)(event.getY() / v.getHeight()*100)));
-                    return true;
-                }
-            });
-            return  rootView;
-        }
-    }
 
     public static class BodyFragment extends Fragment {
         boolean front_or_back;
+
 
         @Override
         public void onCreate(Bundle savedInstanceState) {
@@ -184,7 +163,8 @@ public class SelectBodyPartActivity extends ActionBarActivity implements ActionB
         }
 
         @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState){
+        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
 
             View rootView;
 
@@ -211,18 +191,23 @@ public class SelectBodyPartActivity extends ActionBarActivity implements ActionB
                         if(b.checkIfTouched(x, y, front_or_back)) {
                             Log.v("BodyPartName", b.name);
 
-                            Intent intent = new Intent(getActivity(), SelectExerciseActivity.class);
+
+                            Intent intent =new Intent((getActivity()), WorkOutPlanActivity.class);
+                            startActivity(intent);
+                            /*Intent intent = new Intent(getActivity(), SelectExerciseActivity.class);
                             intent.putExtra("bodyPartId", b.getId());
                             startActivity(intent);
+                            break;*/
 
-                            break;
                         }
                     }
 
                     return true;
                 }
+
             });
             return  rootView;
         }
     }
+
 }

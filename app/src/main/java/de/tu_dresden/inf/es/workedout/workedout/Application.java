@@ -9,6 +9,8 @@ import de.tu_dresden.inf.es.workedout.workedout.models.Device;
 import de.tu_dresden.inf.es.workedout.workedout.models.DeviceExercises;
 import de.tu_dresden.inf.es.workedout.workedout.models.Exercise;
 import de.tu_dresden.inf.es.workedout.workedout.models.ExerciseBodyParts;
+import de.tu_dresden.inf.es.workedout.workedout.models.WorkOutPlan;
+import de.tu_dresden.inf.es.workedout.workedout.models.WorkOutPlanExercises;
 
 public class Application extends android.app.Application {
     @Override
@@ -80,6 +82,13 @@ public class Application extends android.app.Application {
         if(!DeviceExercises.all(DeviceExercises.class).isEmpty()) {
             new Delete().from(DeviceExercises.class).execute();
         }
+        if(!WorkOutPlanExercises.all(WorkOutPlanExercises.class).isEmpty()) {
+            new Delete().from(WorkOutPlanExercises.class).execute();
+        }
+        if(!WorkOutPlan.all(WorkOutPlan.class).isEmpty()) {
+            new Delete().from(WorkOutPlan.class).execute();
+        }
+
 
         /*
             Body Parts
@@ -155,5 +164,16 @@ public class Application extends android.app.Application {
             bankdruecken,
             engesBankdruecken
         });
+
+        /*
+            WorkOutPlans
+         */
+
+        WorkOutPlan legD;
+        legD = new WorkOutPlan("LegDay");
+        legD.save();
+        legD.addExercise(beinpresse);
+        legD.addExercise(wadenwippen);
+
     }
 }

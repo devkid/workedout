@@ -7,6 +7,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListAdapter;
 import android.widget.ListView;
@@ -14,6 +15,7 @@ import android.widget.ListView;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.tu_dresden.inf.es.workedout.workedout.models.WorkOutPlan;
 import de.tu_dresden.inf.es.workedout.workedout.utils.Nfc;
 
 
@@ -30,18 +32,37 @@ public class MainActivity extends ActionBarActivity {
 
         // Fill list of recent workouts
         List<String> recentWorkouts = new ArrayList<>();
-        recentWorkouts.add(getString(R.string.no_workouts));
+        List<WorkOutPlan> workOutPlanlIST=WorkOutPlan.all(WorkOutPlan.class);
+        for (WorkOutPlan w :workOutPlanlIST) recentWorkouts.add(w.name);
+        if (recentWorkouts.isEmpty())
+            recentWorkouts.add(getString(R.string.no_workouts));
+
         ListAdapter adapter = new ArrayAdapter<>(getApplicationContext(),
                 R.layout.list_item_black_text, R.id.black_text, recentWorkouts);
 
         ListView recentWorkoutsView = (ListView) findViewById(R.id.listView);
         recentWorkoutsView.setAdapter(adapter);
+        // list item selection handling
+        ((ListView)findViewById(R.id.listView)).setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                // get selected entry
+                String entry = (String) parent.getItemAtPosition(position);
+
+                // start exercise
+                Intent intent = new Intent(MainActivity.this, WorkOutPlanActivity.class);
+                intent.putExtra("workOutPlan", entry);
+                startActivity(intent);
+            }
+        });
     }
 
     public void onStartNewWorkout(View view) {
         Intent intent = new Intent(this, SelectBodyPartActivity.class);
         startActivity(intent);
     }
+
+
 
     /*
         NFC handling
